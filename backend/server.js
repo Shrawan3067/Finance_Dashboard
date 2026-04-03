@@ -12,7 +12,10 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "https://finance-dashboard-six-tau.vercel.app/login",
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
