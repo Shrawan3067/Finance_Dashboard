@@ -1,6 +1,6 @@
 // frontend/src/pages/Transactions.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { 
   Plus, Edit2, Trash2, Search, Filter, X, Calendar, 
@@ -47,7 +47,7 @@ const Transactions = () => {
 
   const fetchTransactions = async () => {
     try {
-      const response = await axios.get('/api/transactions');
+      const response = await api.get('/api/transactions');
       setTransactions(response.data.transactions);
       setFilteredTransactions(response.data.transactions);
       
@@ -118,10 +118,10 @@ const Transactions = () => {
     e.preventDefault();
     try {
       if (editingTransaction) {
-        await axios.put(`/api/transactions/${editingTransaction._id}`, formData);
+        await api.put(`/api/transactions/${editingTransaction._id}`, formData);
         toast.success('Transaction updated successfully');
       } else {
-        await axios.post('/api/transactions', formData);
+        await api.post('/api/transactions', formData);
         toast.success('Transaction created successfully');
       }
       fetchTransactions();
@@ -134,7 +134,7 @@ const Transactions = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this transaction?')) {
       try {
-        await axios.delete(`/api/transactions/${id}`);
+        await api.delete(`/api/transactions/${id}`);
         toast.success('Transaction deleted successfully');
         fetchTransactions();
       } catch (error) {

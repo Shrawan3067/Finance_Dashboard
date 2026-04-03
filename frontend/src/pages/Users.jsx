@@ -1,6 +1,6 @@
 // frontend/src/pages/Users.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { 
   Search, Filter, Shield, UserCheck, UserX, Trash2, 
@@ -38,7 +38,7 @@ const Users = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('/api/users');
+      const response = await api.get('/api/users');
       setUsers(response.data.users);
       setFilteredUsers(response.data.users);
     } catch (error) {
@@ -86,7 +86,7 @@ const Users = () => {
 
   const updateUserRole = async (userId, role) => {
     try {
-      await axios.put(`/api/users/${userId}`, { role });
+      await api.put(`/api/users/${userId}`, { role });
       toast.success('User role updated successfully');
       fetchUsers();
     } catch (error) {
@@ -96,7 +96,7 @@ const Users = () => {
 
   const updateUserStatus = async (userId, status) => {
     try {
-      await axios.put(`/api/users/${userId}`, { status });
+      await api.put(`/api/users/${userId}`, { status });
       toast.success(`User ${status === 'active' ? 'activated' : 'deactivated'} successfully`);
       fetchUsers();
     } catch (error) {
@@ -112,7 +112,7 @@ const Users = () => {
     
     if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       try {
-        await axios.delete(`/api/users/${userId}`);
+        await api.delete(`/api/users/${userId}`);
         toast.success('User deleted successfully');
         fetchUsers();
       } catch (error) {

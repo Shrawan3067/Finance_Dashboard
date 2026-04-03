@@ -1,6 +1,6 @@
 // frontend/src/pages/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { DollarSign, TrendingUp, TrendingDown, Wallet, Calendar, RefreshCw, ArrowUp, ArrowDown, Award, Target, Zap } from 'lucide-react';
@@ -21,7 +21,7 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await axios.get('/api/dashboard/summary');
+      const response = await api.get('/api/dashboard/summary');
       setSummary(response.data.summary);
     } catch (error) {
       toast.error('Failed to fetch dashboard data');
