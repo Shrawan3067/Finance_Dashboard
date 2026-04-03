@@ -16,7 +16,9 @@ const app = express();
 // CORS CONFIG
 const allowedOrigins = [
   'https://finance-dashboard-six-tau.vercel.app',
-  'http://localhost:3000'
+  'https://finance-dashboard-422b.onrender.com',
+  'http://localhost:3000',
+  'http://localhost:5173'
 ];
 
 app.use(cors({
@@ -68,7 +70,7 @@ mongoose.connect(process.env.MONGODB_URI)
 
 
 // Server Start
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 8001;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
