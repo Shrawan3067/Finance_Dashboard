@@ -162,7 +162,7 @@ finance-dashboard/
 
 ### Base URL
 ```
-http://localhost:8001
+https://finance-dashboard-0597.onrender.com
 ```
 
 ### Authentication Method
