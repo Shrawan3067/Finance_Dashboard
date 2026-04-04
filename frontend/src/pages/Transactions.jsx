@@ -1,4 +1,3 @@
-// frontend/src/pages/Transactions.jsx
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';

@@ -1,5 +1,4 @@
-// frontend/src/context/AuthContext.jsx
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 
