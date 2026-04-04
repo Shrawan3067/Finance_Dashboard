@@ -8,7 +8,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'https://finance-dashboard-422b.onrender.com',
+        target: 'https://finance-dashboard-m5sh.onrender.com',
         changeOrigin: true
       }
     }
