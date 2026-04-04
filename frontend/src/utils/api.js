@@ -10,11 +10,14 @@ const api = axios.create({
   },
 });
 
-// Add token to requests if available
+// Add role parameter to requests if available
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const userRole = localStorage.getItem('userRole') || 'viewer';
+  // Add role as query parameter
+  if (config.params) {
+    config.params.role = userRole;
+  } else {
+    config.params = { role: userRole };
   }
   return config;
 });

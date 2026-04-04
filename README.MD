@@ -5,7 +5,6 @@ A comprehensive finance dashboard system with role-based access control, transac
 ## 🚀 Features
 
 ### Core Features
-- **User Authentication & Authorization** with JWT
 - **Role-Based Access Control** (Admin, Analyst, Viewer)
 - **Financial Transaction Management** (CRUD operations)
 - **Dashboard Analytics** with charts and summaries
@@ -17,7 +16,7 @@ A comprehensive finance dashboard system with role-based access control, transac
 | Action | Viewer | Analyst | Admin |
 |--------|--------|---------|-------|
 | View Dashboard | ✅ | ✅ | ✅ |
-| View Transactions | ✅ | ✅ | ✅ |
+| View Transactions | ❌ | ✅ | ✅ |
 | Create Transactions | ❌ | ✅ | ✅ |
 | Update Transactions | ❌ | ✅ | ✅ |
 | Delete Transactions | ❌ | ✅ | ✅ |
@@ -38,7 +37,6 @@ A comprehensive finance dashboard system with role-based access control, transac
 ### Backend
 - **Node.js** with Express.js
 - **MongoDB** with Mongoose ODM
-- **JWT** for authentication
 - **Express Validator** for input validation
 - **CORS** for cross-origin requests
 - **Role-based middleware** for access control
@@ -74,7 +72,7 @@ A comprehensive finance dashboard system with role-based access control, transac
    # Backend
    cd backend
    cp .env.example .env
-   # Edit .env with your MongoDB URI and JWT secret
+   # Edit .env with your MongoDB URI
 
    # Frontend
    cd ../frontend
@@ -147,12 +145,11 @@ finance-dashboard/
 
 ## 🔐 Authentication & Security
 
-### JWT Authentication
-- Secure token-based authentication
-- Role-based access control middleware
+### Role-Based Access Control
+- Role-based authorization middleware
 - Protected routes with authorization checks
 - Password hashing with bcrypt
-- Token expiration management
+- Role-based query parameter authentication
 
 ### Security Features
 - CORS enabled for cross-origin requests
@@ -161,28 +158,251 @@ finance-dashboard/
 - Environment variable configuration
 - Secure password policies
 
-## 📊 API Endpoints
+## 📊 API Documentation
+
+### Base URL
+```
+http://localhost:8001
+```
+
+### Authentication Method
+All endpoints use role-based authentication through query parameters:
+```
+?role={viewer|analyst|admin}
+```
+
+**Important**: The `role` parameter must be included in all protected requests to specify the user's role for authorization checks.
+
+### Available Roles
+- **viewer**: Can only access dashboard summary
+- **analyst**: Can access dashboard and all transaction operations  
+- **admin**: Full access including user management
 
 ### Authentication Routes
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `GET /api/auth/me` - Get current user profile
+| Method | Endpoint | Description | Required Role |
+|--------|----------|-------------|---------------|
+| POST | `/api/auth/register` | Register new user | None |
+| POST | `/api/auth/login` | User login | None |
+| GET | `/api/auth/me` | Get current user info | Any role |
+
+#### Register Request Body
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123",
+  "role": "viewer" // optional, defaults to "viewer"
+}
+```
+
+#### Register Response
+```json
+{
+  "success": true,
+  "user": {
+    "id": "64f1a2b3c4d5e6f7g8h9i0j1",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "viewer",
+    "status": "active"
+  }
+}
+```
+
+#### Login Request Body
+```json
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+#### Login Response
+```json
+{
+  "success": true,
+  "user": {
+    "id": "64f1a2b3c4d5e6f7g8h9i0j1",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "viewer",
+    "status": "active"
+  }
+}
+```
 
 ### Dashboard Routes
-- `GET /api/dashboard/summary` - Dashboard analytics (Viewer+, Analyst+, Admin+)
+| Method | Endpoint | Description | Required Role |
+|--------|----------|-------------|---------------|
+| GET | `/api/dashboard/summary` | Get dashboard analytics | viewer, analyst, admin |
+
+#### Example Request
+```
+GET /api/dashboard/summary?role=viewer
+```
+
+#### Dashboard Response
+```json
+{
+  "success": true,
+  "data": {
+    "totalIncome": 15000.00,
+    "totalExpenses": 8500.00,
+    "netBalance": 6500.00,
+    "transactionCount": 25,
+    "recentTransactions": [],
+    "monthlyData": [
+      { "month": "Jan", "income": 5000, "expenses": 3000 },
+      { "month": "Feb", "income": 4000, "expenses": 2500 }
+    ]
+  }
+}
+```
 
 ### Transaction Routes
-- `GET /api/transactions` - List transactions (Analyst+, Admin+)
-- `GET /api/transactions/:id` - Get single transaction (Analyst+, Admin+)
-- `POST /api/transactions` - Create transaction (Analyst+, Admin+)
-- `PUT /api/transactions/:id` - Update transaction (Analyst+, Admin+)
-- `DELETE /api/transactions/:id` - Delete transaction (Analyst+, Admin+)
+| Method | Endpoint | Description | Required Role |
+|--------|----------|-------------|---------------|
+| GET | `/api/transactions` | List all transactions | analyst, admin |
+| GET | `/api/transactions/:id` | Get transaction by ID | analyst, admin |
+| POST | `/api/transactions` | Create new transaction | analyst, admin |
+| PUT | `/api/transactions/:id` | Update transaction | analyst, admin |
+| DELETE | `/api/transactions/:id` | Delete transaction | analyst, admin |
+
+#### Create Transaction Request Body
+```json
+{
+  "amount": 1000.50,
+  "type": "income", // "income" or "expense"
+  "category": "Salary",
+  "description": "Monthly salary",
+  "date": "2024-01-15" // optional, defaults to current date
+}
+```
+
+#### Create Transaction Response
+```json
+{
+  "success": true,
+  "data": {
+    "id": "64f1a2b3c4d5e6f7g8h9i0j2",
+    "amount": 1000.50,
+    "type": "income",
+    "category": "Salary",
+    "description": "Monthly salary",
+    "date": "2024-01-15T00:00:00.000Z",
+    "user": "64f1a2b3c4d5e6f7g8h9i0j1",
+    "createdAt": "2024-01-15T10:30:00.000Z"
+  }
+}
+```
+
+#### Get Transactions Response
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "64f1a2b3c4d5e6f7g8h9i0j2",
+      "amount": 1000.50,
+      "type": "income",
+      "category": "Salary",
+      "description": "Monthly salary",
+      "date": "2024-01-15T00:00:00.000Z",
+      "user": "64f1a2b3c4d5e6f7g8h9i0j1",
+      "createdAt": "2024-01-15T10:30:00.000Z"
+    }
+  ]
+}
+```
+
+#### Example Requests
+```
+GET /api/transactions?role=analyst
+POST /api/transactions?role=admin
+PUT /api/transactions/123?role=analyst
+```
 
 ### User Management Routes
-- `GET /api/users` - List users (Admin only)
-- `GET /api/users/:id` - Get user (Admin only)
-- `PUT /api/users/:id` - Update user (Admin only)
-- `DELETE /api/users/:id` - Delete user (Admin only)
+| Method | Endpoint | Description | Required Role |
+|--------|----------|-------------|---------------|
+| GET | `/api/users` | List all users | admin |
+| PUT | `/api/users/:id` | Update user | admin |
+| DELETE | `/api/users/:id` | Delete user | admin |
+
+#### Update User Request Body
+```json
+{
+  "name": "Updated Name",
+  "email": "updated@example.com",
+  "role": "analyst",
+  "status": "active" // "active" or "inactive"
+}
+```
+
+#### Get Users Response
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "64f1a2b3c4d5e6f7g8h9i0j1",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "role": "viewer",
+      "status": "active",
+      "createdAt": "2024-01-10T08:00:00.000Z"
+    },
+    {
+      "id": "64f1a2b3c4d5e6f7g8h9i0j3",
+      "name": "Jane Smith",
+      "email": "jane@example.com",
+      "role": "admin",
+      "status": "active",
+      "createdAt": "2024-01-12T09:30:00.000Z"
+    }
+  ]
+}
+```
+
+#### Example Requests
+```
+GET /api/users?role=admin
+PUT /api/users/123?role=admin
+DELETE /api/users/123?role=admin
+```
+
+### Health Check
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | API health check |
+
+### Response Format
+All API responses follow this format:
+```json
+{
+  "success": true,
+  "data": {}, // or "user": {}
+  "message": "Operation completed successfully"
+}
+```
+
+### Error Response Format
+```json
+{
+  "success": false,
+  "message": "Error description",
+  "errors": [] // validation errors (if any)
+}
+```
+
+### HTTP Status Codes
+- `200` - Success
+- `201` - Created
+- `400` - Bad Request (validation errors)
+- `401` - Unauthorized (authentication required)
+- `403` - Forbidden (insufficient permissions)
+- `404` - Not Found
+- `500` - Internal Server Error
 
 ## 🎯 Role-Based Access Control
 
@@ -214,8 +434,6 @@ npm run build
 # Backend .env required
 PORT=8001
 MONGODB_URI=mongodb+srv://your-connection-string
-JWT_SECRET=your-super-secret-jwt-key
-JWT_EXPIRE=7d
 NODE_ENV=production
 ```
 

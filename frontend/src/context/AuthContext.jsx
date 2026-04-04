@@ -9,15 +9,15 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [userRole, setUserRole] = useState(localStorage.getItem('userRole'));
 
   useEffect(() => {
-    if (token) {
+    if (userRole) {
       fetchUser();
     } else {
       setLoading(false);
     }
-  }, [token]);
+  }, [userRole]);
 
   const fetchUser = async () => {
     try {
@@ -34,9 +34,9 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await api.post('/api/auth/login', { email, password });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      setToken(token);
+      const { user } = response.data;
+      localStorage.setItem('userRole', user.role);
+      setUserRole(user.role);
       setUser(user);
       toast.success('Login successful!');
       return true;
@@ -49,9 +49,9 @@ export const AuthProvider = ({ children }) => {
   const register = async (name, email, password, role) => {
     try {
       const response = await api.post('/api/auth/register', { name, email, password, role });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      setToken(token);
+      const { user } = response.data;
+      localStorage.setItem('userRole', user.role);
+      setUserRole(user.role);
       setUser(user);
       toast.success('Registration successful!');
       return true;
@@ -62,8 +62,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
+    localStorage.removeItem('userRole');
+    setUserRole(null);
     setUser(null);
     toast.success('Logged out successfully');
   };
