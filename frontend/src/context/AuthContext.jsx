@@ -12,12 +12,14 @@ export const AuthProvider = ({ children }) => {
   const [userRole, setUserRole] = useState(localStorage.getItem('userRole'));
 
   useEffect(() => {
-    if (userRole) {
+    const storedRole = localStorage.getItem('userRole');
+    if (storedRole) {
+      setUserRole(storedRole);
       fetchUser();
     } else {
       setLoading(false);
     }
-  }, [userRole]);
+  }, []);
 
   const fetchUser = async () => {
     try {
@@ -25,7 +27,10 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data.user);
     } catch (error) {
       console.error('Error fetching user:', error);
-      logout();
+      // Don't logout on initial fetch error, just set loading to false
+      if (error.response?.status !== 401) {
+        logout();
+      }
     } finally {
       setLoading(false);
     }
