@@ -1,4 +1,3 @@
-// backend/controllers/transactionController.js
 import Transaction from '../models/Transaction.js';
 import { validationResult } from 'express-validator';
 

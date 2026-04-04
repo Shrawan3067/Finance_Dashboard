@@ -12,8 +12,6 @@ dotenv.config();
 
 const app = express();
 
-
-// ✅ TEMP CORS (ALLOW ALL — FOR DEVELOPMENT)
 app.use(cors({
   origin: true,   // allow all origins
   credentials: true
@@ -39,7 +37,7 @@ app.use('/api/users', userRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
-  console.error("🔥 ERROR:", err.message);
+  console.error("ERROR:", err.message);
 
   res.status(err.status || 500).json({
     message: err.message || 'Something went wrong!',
@@ -49,13 +47,13 @@ app.use((err, req, res, next) => {
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB Connected'))
-  .catch(err => console.error('❌ MongoDB Error:', err));
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.error('MongoDB Error:', err));
 
 
 // Server Start
 const PORT = process.env.PORT || 8001;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

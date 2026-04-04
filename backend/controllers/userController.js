@@ -1,4 +1,3 @@
-// backend/controllers/userController.js
 import User from '../models/User.js';
 import { validationResult } from 'express-validator';
 

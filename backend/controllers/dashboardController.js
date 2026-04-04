@@ -1,4 +1,3 @@
-// backend/controllers/dashboardController.js
 import Transaction from '../models/Transaction.js';
 
 export const getDashboardSummary = async (req, res) => {
