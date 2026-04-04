@@ -1,12 +1,6 @@
 import User from '../models/User.js';
-import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
-  });
-};
 
 export const register = async (req, res) => {
   try {
@@ -31,11 +25,8 @@ export const register = async (req, res) => {
       role: role || 'viewer'
     });
     
-    const token = generateToken(user._id);
-    
     res.status(201).json({
       success: true,
-      token,
       user: {
         id: user._id,
         name: user.name,
@@ -72,11 +63,8 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     
-    const token = generateToken(user._id);
-    
     res.json({
       success: true,
-      token,
       user: {
         id: user._id,
         name: user.name,
